@@ -10,48 +10,43 @@ class User implements JsonSerializable
 {
     private ?int $id;
 
-    private string $username;
+    private string $name;
 
-    private string $firstName;
+    private string $password;
 
-    private string $lastName;
+    private string $last_seen_at;
 
-    public function __construct(?int $id, string $username, string $firstName, string $lastName)
+    public function __construct(?int $id, string $name, string $password, string $last_seen_at)
     {
         $this->id = $id;
-        $this->username = strtolower($username);
-        $this->firstName = ucfirst($firstName);
-        $this->lastName = ucfirst($lastName);
+        $this->name = $name;
+        $this->password = $password;
+        $this->last_seen_at = $last_seen_at;
     }
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getUsername(): string
+    /**
+     * @return string
+     */
+    public function getName(): string
     {
-        return $this->username;
+        return $this->name;
     }
 
-    public function getFirstName(): string
-    {
-        return $this->firstName;
-    }
-
-    public function getLastName(): string
-    {
-        return $this->lastName;
-    }
-
-    #[\ReturnTypeWillChange]
     public function jsonSerialize(): array
     {
         return [
             'id' => $this->id,
-            'username' => $this->username,
-            'firstName' => $this->firstName,
-            'lastName' => $this->lastName,
+            'name' => $this->name,
+            'password' => $this->password,
+            'last_seen_at' => $this->last_seen_at,
         ];
     }
 }

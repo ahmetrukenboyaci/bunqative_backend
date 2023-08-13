@@ -15,26 +15,38 @@ class InMemoryUserRepository implements UserRepository
      */
     private array $users;
 
-    /**
-     * @param User[]|null $users
-     */
-    public function __construct(array $users = null)
+    public function __construct()
     {
-        $this->users = $users ?? [
-            1 => new User(1, 'bill.gates', 'Bill', 'Gates'),
-            2 => new User(2, 'steve.jobs', 'Steve', 'Jobs'),
-            3 => new User(3, 'mark.zuckerberg', 'Mark', 'Zuckerberg'),
-            4 => new User(4, 'evan.spiegel', 'Evan', 'Spiegel'),
-            5 => new User(5, 'jack.dorsey', 'Jack', 'Dorsey'),
-        ];
+        $this->setUsers();
+    }
+
+    public function setUsers()
+    {
+        $json_object = file_get_contents('users.json');
+        $json_array = json_decode($json_object, true);
+
+        $this->users = [];
+
+        array_map(function ($message) {
+            $this->users = [...$this->users,
+                new User(
+                    $message['id'],
+                    $message['name'],
+                    $message['password'],
+                    $message['last_seen_at'],
+                )
+            ];
+        }, $json_array);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function findAll(): array
+    public function findAll($id): array
     {
-        return array_values($this->users);
+        return array_filter($this->users, function ($user) use ($id) {
+            return $id != $user->getId();
+        });
     }
 
     /**
@@ -42,10 +54,50 @@ class InMemoryUserRepository implements UserRepository
      */
     public function findUserOfId(int $id): User
     {
-        if (!isset($this->users[$id])) {
-            throw new UserNotFoundException();
+        $user = $this->searchForId($this->users, $id);
+
+        return $this->users[$user];
+    }
+
+    public function createUser(
+        string $name,
+        string $password,
+        string $last_seen_at
+    ): User {
+        $existed_user = array_filter($this->users, function ($user) use ($name) {
+            return $name == $user->getName();
+        });
+
+        if (count($existed_user) == 0) {
+            $newUser = new User(
+                count($this->users) + 1,
+                $name,
+                $password,
+                $last_seen_at,
+            );
+            $user_file = file_get_contents('users.json');
+            $temp_array = json_decode($user_file);
+            $temp_array = [...$temp_array, $newUser];
+            $jsonData = json_encode($temp_array);
+            file_put_contents('users.json', $jsonData);
+
+            $this->setUsers();
+
+            return $newUser;
         }
 
-        return $this->users[$id];
+        $array_values = array_values($existed_user);
+
+        return array_shift($array_values);
+    }
+
+    public function searchForId($array, $id)
+    {
+        foreach ($array as $key => $val) {
+            if ($val->getId() === $id) {
+                return $key;
+            }
+        }
+        return null;
     }
 }

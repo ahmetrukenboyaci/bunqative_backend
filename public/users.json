@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "bill",
+    "password": "test",
+    "last_seen_at": "2023-08-07T18:07:56.000000Z"
+  },
+  {
+    "id": 2,
+    "name": "steve",
+    "password": "test",
+    "last_seen_at": "2023-08-07T18:07:56.000000Z"
+  },
+  {
+    "id": 3,
+    "name": "mark",
+    "password": "test",
+    "last_seen_at": "2023-08-07T18:07:56.000000Z"
+  },
+  {
+    "id": 4,
+    "name": "evan",
+    "password": "test",
+    "last_seen_at": "2023-08-07T18:07:56.000000Z"
+  },
+  {
+    "id": 5,
+    "name": "jack",
+    "password": "test",
+    "last_seen_at": "2023-08-07T18:07:56.000000Z"
+  },
+  {
+    "id": 6,
+    "name": "user",
+    "password": "user",
+    "last_seen_at": "2023-08-13T02:43:46+00:00"
+  }
+]
